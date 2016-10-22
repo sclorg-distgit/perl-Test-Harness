@@ -2,14 +2,12 @@
 
 Name:           %{?scl_prefix}perl-Test-Harness
 Version:        3.36
-Release:        368%{?dist}
+Release:        367%{?dist}
 Summary:        Run Perl standard test scripts with statistics
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/Test-Harness/
 Source0:        http://www.cpan.org/authors/id/L/LE/LEONT/Test-Harness-%{version}.tar.gz
-# Avoid loading optional modules from default . (CVE-2016-1238)
-Patch0:         Test-Harness-3.36-CVE-2016-1238-avoid-loading-optional-modules-from.patch
 BuildArch:      noarch
 BuildRequires:  coreutils
 BuildRequires:  findutils
@@ -83,7 +81,6 @@ writing new code consider using TAP::Harness directly instead.
 
 %prep
 %setup -q -n Test-Harness-%{version}
-%patch0 -p1
 
 %build
 %{?scl:scl enable %{scl} '}perl Makefile.PL INSTALLDIRS=vendor && make %{?_smp_mflags}%{?scl:'}
@@ -104,9 +101,6 @@ find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \;
 %{_mandir}/man3/*
 
 %changelog
-* Wed Aug 03 2016 Jitka Plesnikova <jplesnik@redhat.com> - 3.36-368
-- Avoid loading optional modules from default . (CVE-2016-1238)
-
 * Mon Jul 11 2016 Petr Pisar <ppisar@redhat.com> - 3.36-367
 - SCL
 
