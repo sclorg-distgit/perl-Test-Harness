@@ -10,7 +10,7 @@
 Name:           %{?scl_prefix}perl-Test-Harness
 Epoch:          1
 Version:        3.42
-Release:        451%{?dist}
+Release:        452%{?dist}
 Summary:        Run Perl standard test scripts with statistics
 License:        GPL+ or Artistic
 URL:            https://metacpan.org/release/Test-Harness
@@ -18,9 +18,11 @@ Source0:        https://cpan.metacpan.org/authors/id/L/LE/LEONT/Test-Harness-%{v
 # Remove hard-coded shell bangs
 Patch0:         Test-Harness-3.38-Remove-shell-bangs.patch
 BuildArch:      noarch
+BuildRequires:  findutils
 BuildRequires:  make
 BuildRequires:  %{?scl_prefix}perl-generators
 BuildRequires:  %{?scl_prefix}perl-interpreter
+BuildRequires:  %{?scl_prefix}perl(Config)
 BuildRequires:  %{?scl_prefix}perl(ExtUtils::MakeMaker) >= 6.76
 BuildRequires:  %{?scl_prefix}perl(strict)
 BuildRequires:  %{?scl_prefix}perl(warnings)
@@ -28,7 +30,6 @@ BuildRequires:  %{?scl_prefix}perl(warnings)
 BuildRequires:  %{?scl_prefix}perl(base)
 BuildRequires:  %{?scl_prefix}perl(Benchmark)
 BuildRequires:  %{?scl_prefix}perl(Carp)
-BuildRequires:  %{?scl_prefix}perl(Config)
 BuildRequires:  %{?scl_prefix}perl(constant)
 BuildRequires:  %{?scl_prefix}perl(Exporter)
 BuildRequires:  %{?scl_prefix}perl(File::Basename)
@@ -81,6 +82,10 @@ writing new code consider using TAP::Harness directly instead.
 %prep
 %setup -q -n Test-Harness-%{version}
 %patch0 -p1
+%{?scl:scl enable %{scl} - <<'EOC'}
+find examples -type f \
+    -exec perl -MConfig -i -pe 's{^#!/usr/bin/perl}{$Config{startperl}}' {} +
+%{?scl:EOC}
 
 %build
 %{?scl:scl enable %{scl} '}perl Makefile.PL INSTALLDIRS=vendor NO_PACKLIST=1 && make %{?_smp_mflags}%{?scl:'}
@@ -100,6 +105,9 @@ writing new code consider using TAP::Harness directly instead.
 %{_mandir}/man3/*
 
 %changelog
+* Tue Mar 17 2020 Petr Pisar <ppisar@redhat.com> - 1:3.42-452
+- Normalize the shebangs in a documentation (bug #1813316)
+
 * Thu Jan 02 2020 Jitka Plesnikova <jplesnik@redhat.com> - 1:3.42-451
 - SCL
 
